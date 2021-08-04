@@ -8,12 +8,13 @@ $(document).ready(function() {
 
         Swal.fire({
             title: 'Library',
-            text: 'Deseja realmente excluir esse registro?',
+            text: 'Deseja realmente excluir o registro?',
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Sim',
             cancelButtonText: 'Não'
-        }).then((result => {
+        }).then((result) => {
+
             if (result.value) {
 
                 $.ajax({
@@ -21,7 +22,7 @@ $(document).ready(function() {
                     dataType: 'json',
                     assync: true,
                     data: IDTIPO_USUARIO,
-                    url: 'src/tipo-usuario/model/delete-tipo.php',
+                    url: "src/tipo-usuario/model/delete-tipo.php",
                     success: function(dados) {
                         Swal.fire({
                             title: 'Library',
@@ -33,8 +34,9 @@ $(document).ready(function() {
                         $('#table-tipo').DataTable().ajax.reload()
                     }
                 })
-            }
-        }))
 
+            }
+
+        })
     })
 })

@@ -1,60 +1,58 @@
 <?php
 
-    //Realizar o include da conexão
+    // Realizar o include da conexão com o banco de dados
     include('../../conexao/conn.php');
 
-
-    //Obter o request vindo do datatable
+    // Obter os request vindo do banco de dados
     $requestData = $_REQUEST;
 
-    //Obter as colunas vindas do resquest
+    // Obter as colunas vindas do request
     $colunas = $requestData['columns'];
 
-    //Preparar o comando sql para obter os dados da categoria
-    $sql = "SELECT IDEIXO, NOME FROM EIXO WHERE 1=1 ";
+    // Prepara o SQL básico para consulta ao banco de dados
+    $sql = "SELECT IDEIXO, NOME FROM EIXO WHERE 1=1";
 
-    //Obter o total de registros cadastrados
+    // Obter o total de registros cadastrados no banco de dados
     $resultado = $pdo->query($sql);
     $qtdeLinhas = $resultado->rowCount();
-    
-    //Verificando se há filtro determinado
+
+    // Verificação se existe algums filtro a ser pesquisado
     $filtro = $requestData['search']['value'];
-    if( !empty( $filtro ) ){
-        //Montar a expressão lógica que irá compor os filtros
-        //Aqui você deverá determinar quais colunas farão parte do filtro
-        $sql .= " AND (IDEIXO LIKE '$filtro%' ";
-        $sql .= " OR NOME LIKE '$filtro%') ";
+    if(!empty($filtro)){
+        // Montar a lógica para executar o filtro
+        // Aqui também determinamos quais colunas farão parte da nossa pesquisa
+        $sql .= " AND (IDEIXO LIKE '%$filtro%' ";
+        $sql .= " OR NOME LIKE '%$filtro%') " ;
     }
-    
-    //Obter o total dos dados filtrados
+
+    // Obter o total de dados filtrados
     $resultado = $pdo->query($sql);
     $totalFiltrados = $resultado->rowCount();
-    
-    //Obter valores para ORDER BY      
-    $colunaOrdem = $requestData['order'][0]['column']; //Obtém a posição da coluna na ordenação
-    $ordem = $colunas[$colunaOrdem]['data']; //Obtém o nome da coluna para a ordenação
-    $direcao = $requestData['order'][0]['dir']; //Obtém a direção da ordenação
-    
-    //Obter valores para o LIMIT
-    $inicio = $requestData['start']; //Obtém o ínicio do limite
-    $tamanho = $requestData['length']; //Obtém o tamanho do limite
-    
-    //Realizar o ORDER BY com LIMIT
+
+    // Criar a lógica para ordenação de dados em tela
+    $colunaOrdem = $requestData['order'][0]['column']; //Obtendo a posição da coluna a ser ordenada
+    $ordem = $colunas[$colunaOrdem]['data']; //Obtendo o nome da coluna que será organizada
+    $direcao = $requestData['order'][0]['dir']; //Obtermos a direção que será ordenado
+
+    // Criar os limites de dados que irão aparecer na tela
+    $inicio = $requestData['start']; //Obtendo o início do limite
+    $tamanho = $requestData['length']; //Obter o tamanho do limite
+
+    // Criar a query de ordenação e limite da dados
     $sql .= " ORDER BY $ordem $direcao LIMIT $inicio, $tamanho ";
     $resultado = $pdo->query($sql);
     $dados = array();
     while($row = $resultado->fetch(PDO::FETCH_ASSOC)){
         $dados[] = array_map('utf8_encode', $row);
     }
-    //Monta o objeto json para retornar ao DataTable
-    $json_data = array(
+
+    // Montar o objeto json de retorno nos padrões do DataTables
+    $json_data = Array(
         "draw" => intval($requestData['draw']),
         "recordsTotal" => intval($qtdeLinhas),
         "recordsFiltered" => intval($totalFiltrados),
         "data" => $dados
     );
 
-
-
-    //Retorna o objeto json para o DataTable
+    // Retornamos o elemento JSON
     echo json_encode($json_data);

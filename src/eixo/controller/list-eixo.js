@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    $('#eixo').DataTable({
+
+    $('#table-eixo').DataTable({
         "processing": true,
         "serverSide": true,
         "ajax": {
@@ -7,21 +8,21 @@ $(document).ready(function() {
             "type": "POST"
         },
         "language": {
-            "url": "libs/DataTables/pt_br.json"
+            "url": "libs/dataTables/pt_br.json"
         },
         "columns": [{
                 "data": 'IDEIXO',
-                "className": 'text-center'
+                "className": "text-center"
             },
             {
                 "data": 'NOME',
-                "className": 'text-center'
+                "className": "text-center"
             },
             {
                 "data": 'IDEIXO',
                 "orderable": false,
                 "searchable": false,
-                "className": 'text-center',
+                "className": "text-center",
                 "render": function(data, type, row, meta) {
                     return `
                     <button id="${data}" class="btn btn-info btn-sm btn-view"><i class="fas fa-eye"></i></button>

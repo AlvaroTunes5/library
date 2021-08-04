@@ -1,61 +1,60 @@
 <?php
 
-    // Obter a nossa conexão com o banco de dados
+    // Obter nossa conexão com banco de dados
     include('../../conexao/conn.php');
 
-    // Obter os dados enviados do formulário via $_REQUEST
+    // Obter os dados enviados do formulário via REQUEST
     $requestData = $_REQUEST;
 
-    // Verificação de campo obrigatórios do formulário
+    // Verificação dos campos obrigatórios do formulário
     if(empty($requestData['NOME'])){
-        // Caso a variável venha vazia eu gero um retorno de erro do mesmo
+        // Caso a variável venha vazia gerar um retorno com erro
         $dados = array(
-            "tipo" => 'error',
-            "mensagem" => 'Existe(m) campo(s) obrigatório(s) não preenchido(s).'
+            "tipo" => "error",
+            "mensagem" => "Existe(m) campo(s) obrigatório(s) não preenchido(s)"
         );
     } else {
-        // Caso não exista campo em vazio, vamos gerar a requisição
-        $IDEIXO = isset($requestData['IDEIXO']) ? $requestData['IDEIXO'] : '';
+        // Caso a variável exista e tenha conteúdo, vamos gerar uma requisição
+        $ID = isset($requestData['IDEIXO']) ? $requestData['IDEIXO'] : '';
         $operacao = isset($requestData['operacao']) ? $requestData['operacao'] : '';
 
-        // Verifica se é para cadastra um nvo registro
+        // Verificação se é para cadastrar um novo registro
         if($operacao == 'insert'){
-            // Prepara o comando INSERT para ser executado
-            try{
-                $stmt = $pdo->prepare('INSERT INTO EIXO (NOME) VALUES (:nome)');
+            try {
+                $stmt = $pdo->prepare('INSERT INTO EIXO (NOME) VALUES (:a)');
                 $stmt->execute(array(
-                    ':nome' => utf8_decode($requestData['NOME'])
+                    ':a' => utf8_decode($requestData['NOME'])
                 ));
                 $dados = array(
-                    "tipo" => 'success',
-                    "mensagem" => 'Eixo tecnológico cadastrado com sucesso.'
-                );
-            } catch(PDOException $e) {
-                $dados = array(
-                    "tipo" => 'error',
-                    "mensagem" => 'Não foi possível efetuar o cadastro do eixo.'
-                );
-            }
-        } else {
-            // Se minha variável operação estiver vazia então devo gerar os scripts de update
-            try{
-                $stmt = $pdo->prepare('UPDATE EIXO SET NOME = :nome WHERE IDEIXO = :id');
-                $stmt->execute(array(
-                    ':id' => $IDEIXO,
-                    ':nome' => utf8_decode($requestData['NOME'])
-                ));
-                $dados = array(
-                    "tipo" => 'success',
-                    "mensagem" => 'Eixo tecnológico atualizado com sucesso.'
+                    "tipo" => "success",
+                    "mensagem" => "Eixo tecnológico cadastrado com sucesso."
                 );
             } catch (PDOException $e) {
                 $dados = array(
-                    "tipo" => 'error',
-                    "mensagem" => 'Não foi possível efetuar o alteração do eixo.'
+                    "tipo" => "error",
+                    "mensagem" => "Não foi possível efetuar o cadastro do eixo."
+                );
+            }
+        } else {
+            // Se minha variável operação estiver vazia então executa o update do registro
+            try {
+                $stmt = $pdo->prepare('UPDATE EIXO SET NOME = :a WHERE IDEIXO = :id');
+                $stmt->execute(array(
+                    ':id' => $ID,
+                    ':a' => utf8_decode($requestData['NOME'])
+                ));
+                $dados = array(
+                    "tipo" => "success",
+                    "mensagem" => "Eixo tecnológico alterado com sucesso."
+                );
+            } catch (PDOException $e) {
+                $dados = array(
+                    "tipo" => "error",
+                    "mensagem" => "Não foi possível efetuar a alteração do eixo tecnológico."
                 );
             }
         }
     }
 
-    // Converter um array ded dados para a representação JSON
+    // Converter um array de dados para a representação JSON
     echo json_encode($dados);

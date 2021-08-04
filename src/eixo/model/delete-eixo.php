@@ -1,24 +1,24 @@
 <?php
 
-    // Instância do banco de dados
-    include("../../conexao/conn.php");
+    // Instânciar nosso banco de dados
+    include('../../conexao/conn.php');
 
-    // Coleta do ID que será excluído do nosso banco de dados que está sendo enviado pelo FORM
-    $IDEIXO = $_REQUEST['IDEIXO'];
+    // Coleta do ID que será excluído do nosso banco de dados
+    $ID = $_REQUEST['IDEIXO'];
 
-    // Criar a nossa querie para interação com o banco de dados
-    $sql = "DELETE FROM EIXO WHERE IDEIXO = $IDEIXO";
+    // Criar a nossa querie para interação com banco de dados
+    $sql = "DELETE FROM EIXO WHERE IDEIXO = $ID";
 
-    // Executar a nossa querie
+    // Executar nossa consulta sql
     $resultado = $pdo->query($sql);
 
-    // Testaremos o retorno do resultado da nossa querie
+    // Testar o retorno da consulta sql
     if($resultado){
         $dados = array(
             'tipo' => 'success',
             'mensagem' => 'Registro excluído com sucesso!'
         );
-    } else {
+    }else{
         $dados = array(
             'tipo' => 'error',
             'mensagem' => 'Não foi possível excluir o registro'

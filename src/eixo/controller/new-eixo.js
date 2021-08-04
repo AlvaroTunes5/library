@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
     $('.btn-new').click(function(e) {
         e.preventDefault()
 
@@ -15,4 +16,5 @@ $(document).ready(function() {
 
         $('#modal-eixo').modal('show')
     })
+
 })

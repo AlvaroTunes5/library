@@ -1,5 +1,6 @@
 import defaultParams, { showWarningsForParams } from '../utils/params.js'
 import * as dom from '../utils/dom/index.js'
+import { swalClasses } from '../utils/classes.js'
 import Timer from '../utils/Timer.js'
 import { callIfFunction } from '../utils/utils.js'
 import setParameters from '../utils/setParameters.js'
@@ -46,9 +47,11 @@ export function _main (userParams, mixinParams = {}) {
 
 const prepareParams = (userParams, mixinParams) => {
   const templateParams = getTemplateParams(userParams)
+  const showClass = Object.assign({}, defaultParams.showClass, mixinParams.showClass, templateParams.showClass, userParams.showClass)
+  const hideClass = Object.assign({}, defaultParams.hideClass, mixinParams.hideClass, templateParams.hideClass, userParams.hideClass)
   const params = Object.assign({}, defaultParams, mixinParams, templateParams, userParams) // precedence is described in #2131
-  params.showClass = Object.assign({}, defaultParams.showClass, params.showClass)
-  params.hideClass = Object.assign({}, defaultParams.hideClass, params.hideClass)
+  params.showClass = showClass
+  params.hideClass = hideClass
   // @deprecated
   if (userParams.animation === false) {
     params.showClass = {
@@ -78,6 +81,12 @@ const swalPromise = (instance, domCache, innerParams) => {
     handlePopupClick(instance, domCache, dismissWith)
 
     addKeydownHandler(instance, globalState, innerParams, dismissWith)
+
+    if (innerParams.toast && (innerParams.input || innerParams.footer || innerParams.showCloseButton)) {
+      dom.addClass(document.body, swalClasses['toast-column'])
+    } else {
+      dom.removeClass(document.body, swalClasses['toast-column'])
+    }
 
     handleInputOptionsAndValue(instance, innerParams)
 
